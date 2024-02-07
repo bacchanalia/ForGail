@@ -1,0 +1,50 @@
+cabal-version:      3.0
+name:               ForGail
+version:            0.1.0.0
+license:            AGPL-3.0-or-later
+license-file:       LICENSE
+author:             Mel Zuser
+maintainer:         mel@mzero.dev
+category:           Educational
+build-type:         Simple
+
+common warnings
+    ghc-options:      -Wall
+                      -fno-warn-type-defaults
+                      -fno-warn-missing-signatures
+
+common extensions
+    default-extensions: NoImplicitPrelude
+                      , BlockArguments
+                      , ImportQualifiedPost
+                      , GADTs
+
+library
+    import:           warnings
+                    , extensions
+    exposed-modules:  Hello
+                    , GailPrelude
+    build-depends:    base ^>=4.17.0.0
+    hs-source-dirs:   src
+    default-language: GHC2021
+
+executable ForGail
+    import:           warnings
+                    , extensions
+    main-is:          Main.hs
+    build-depends:
+        base ^>=4.17.0.0,
+        ForGail
+    hs-source-dirs:   app
+    default-language: GHC2021
+
+test-suite ForGail-test
+    import:           warnings
+                    , extensions
+    default-language: GHC2021
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Main.hs
+    build-depends:
+        base ^>=4.17.0.0,
+        ForGail
