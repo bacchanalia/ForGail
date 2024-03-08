@@ -1,12 +1,8 @@
 module Hello where
 
--- just saying hi :)
-
 import GailPrelude
 import Prelude qualified
 import Data.List qualified as List
-import Distribution.Compat.Stack (callStack)
-import qualified Control.Applicative as 2nd
 
 ---- Basic definitions
 
@@ -115,17 +111,17 @@ ex1 x y z = x*(y+z) + y*z
 sumOfPowers :: Int -> Int
 
 --            calls plus
---            on pow x 3 and 
+--            on pow x 3 and
 --            the result of (plus (pow x 2) x)
 --                      |
 --              ________|___________________________
 --             |        |       calls plus        |
 --             |        |     on pow x 2 and x    |
---             |        |      _______|__________ |              
---             |        |      |                | | 
+--             |        |      _______|__________ |
+--             |        |      |                | |
 sumOfPowers x = plus (pow x 3) (plus (pow x 2) x)
---                    calls pow      calls pow 
---                    with x and     with x and  
+--                    calls pow      calls pow
+--                    with x and     with x and
 --                    3 as args      2 as args
 --                        |              |
 -- _______________________|______________|_
@@ -153,10 +149,10 @@ sumOfPowersWithBoth :: Int -> Int
 --                            let ... in and be used anywhere you can use an expression
 --                                ────────────────────┴──────────────────
 sumOfPowersWithBoth x     =    plus cube       (let square = pow x 2 in plus square x)
---      |           |           |    |          ___________  ________ _______________   
+--      |           |           |    |          ___________  ________ _______________
 --name function   1 arg         |   defined          |             |        |
 --                              |above as x**3     about to        |     def of "square" applies under
---                              |                 define s/t we're |     these circumstances. 
+--                              |                 define s/t we're |     these circumstances.
 --                           outside f()          calling 'square' |     applying "plus" to "square" and "x"
 --                         adds the result of cube                 |
 --                         and the stuff in parens               def of "square"
@@ -167,14 +163,14 @@ sumOfPowersWithBoth x     =    plus cube       (let square = pow x 2 in plus squ
 
 -- Exercise 2: Rewrite doupleXPlusTripleY using let and where
 doupleXPlusTripleYWithLet :: Int -> Int -> Int
-doupleXPlusTripleYWithLet x y =  let  doubleX = x * 2 
-                                      tripleY = y * 3 
+doupleXPlusTripleYWithLet x y =  let  doubleX = x * 2
+                                      tripleY = y * 3
                                   in plus doubleX tripleY
---         
+--
 
 doubleXPlusTripleYWithWhere :: Int -> Int -> Int
 doubleXPlusTripleYWithWhere x y = plus doubleX tripleY
-  where 
+  where
     doubleX = x * 2
     tripleY = y * 3
 
@@ -217,7 +213,7 @@ fst (a, _) = a
 
 -- Exercise 3: fill in these definitions
 snd :: (a, b) -> b
-snd (a, b) = b 
+snd (_, b) = b
 -- different from snd a b = b, which would mean taking two separate args and returning the 2nd.
 -- instead, (a,b) is a tuple; it's one arg. snd returns the second part.
 
@@ -225,16 +221,16 @@ threeOfThem :: a -> (a, a, a)
 threeOfThem a = (a, a, a)
 
 fstOf3 :: (a, b, c) -> a
-fstOf3 (a, b, c) = a
+fstOf3 (a, _, _) = a
 
 sndOf3 :: (a, b, c) -> b
-sndOf3 (a, b, c) = b
+sndOf3 (_, b, _) = b
 
 thirdOf3 :: (a, b, c) -> c
-thirdOf3 (a, b, c) = c
+thirdOf3 (_, _, c) = c
 
 -- Exercise 4:
--- a) What is the type of ex3Mystery?
+-- a) What is the type of ex4Mystery?
 --a tuple? (a, b) -> (b,a)
 -- b) Describe what it does.
 -- it takes a tuple and returns that tuple with the value order swapped
@@ -243,21 +239,21 @@ thirdOf3 (a, b, c) = c
 -- d) Define a second version of it using pattern matching instead of fst and snd
 -- tupleswap (a,b) = (b, a)
 
-ex3Mystery x = (snd x, fst x)
-ex3Mystery :: (b1, b2) -> (b2, b1)
+ex4Mystery :: (b1, b2) -> (b2, b1)
+ex4Mystery x = (snd x, fst x)
 
 -- Exercise 5: fill in the definition
 firsts :: (a, b) -> (c, d) -> (a, c)
-firsts (a,b) (c,d) = (a,c)
+firsts (a,_) (c,_) = (a,c)
 
 seconds :: (a, b) -> (c, d) -> (b, d)
-seconds (a, b) (c, d) = (b, d)
+seconds (_, b) (_, d) = (b, d)
 
 inners :: (a, b) -> (c, d) -> (b, c)
-inners (a, b) (c, d) = (b, c)
+inners (_, b) (c, _) = (b, c)
 
 outers :: (a, b) -> (c, d) -> (a, d)
-outers (a, b) (c, d) = (a, d)
+outers (a, _) (_, d) = (a, d)
 
 -- The unit type () has only one value ()
 -- It's like a 0-tuple
@@ -266,9 +262,9 @@ unit = ()
 
 -- Exercise 6: fill in the definition
 noneOfThem :: a -> ()
-noneOfThem a = ()
+noneOfThem _ = ()
 --WHY NOT THIS? noneOfThem a = None or noneOfThem a = nil
- 
+
 
 ---- Type class basics
 
@@ -345,7 +341,7 @@ a !^ b = a ^ b
 -- Exercise 7: insert parens into the definitions with(out?) changing their values
 ex7a = (3  * 4)  + (2  * (6  ^ 2))
 ex7b = (3 !* ((4 !+ 2) !* 6))!^ 2
--- in order of precedence, highest to lowest: !+, !*, !^ 
+-- in order of precedence, highest to lowest: !+, !*, !^
 ex7c = (2  ^ 3)  ^ 2
 ex7d = 2 !^ (3 !^ 2)
 -- read right to left.
@@ -394,14 +390,13 @@ _    && _    = False
 -- Logical or
 infixr 2 ||
 (||) :: Bool -> Bool -> Bool
-(||) False False = False
-(||) _ _ = True
-
-
-(||) :: Bool -> Bool -> Bool
 False || False = False
 _ || _ = True
 
+{-
+(||) :: Bool -> Bool -> Bool
+(||) False False = False
+(||) _ _ = True
 
 -- This also works but it's clunky.
 (||) :: Bool -> Bool -> Bool
@@ -409,15 +404,16 @@ _ || _ = True
 (||) True False = True
 (||) False True = True
 (||) True True = True
+-}
 
 
 -- Now lets make some comparision operators
 
 -- infix instead of infixl or infixr means that they don't associate
 infix 4 ==, /=, <, <=, >, >=
---comparisons are typically binary and independent 
+--comparisons are typically binary and independent
 --so can't chain so association doesn't make sense
---i.e., a < b < c doesn't have a clear meaning 
+--i.e., a < b < c doesn't have a clear meaning
 
 
 -- Eq is the class of types that can be compared for equality
@@ -436,7 +432,7 @@ a >= b = a Prelude.>= b
 -- Exercise 10: write the type and define the function
 
 -- tests if a number is positive
-positive :: Num a, Ord a => a -> Bool
+positive :: (Num a, Ord a) => a -> Bool
 positive a = a > 0
 -- Aren't all nonimaginary numbers automatically Ord?
 -- Lots of things are Ord but not numbers; it's anything with an ordering
@@ -449,10 +445,12 @@ inRange :: Ord a => a -> a -> a -> Bool
 inRange a b c = a <= c && c <= b
 
 -- outOfRange a b c is true if c not is between a and b (exclusive)
-outOFRange :: Ord a => a -> a -> a -> Bool
+{-
+outOfRange :: Ord a => a -> a -> a -> Bool
 outOfRange a b c = c < a || c > b
+-}
 
-outOFRange' :: Ord a => a -> a -> a -> Bool
+outOfRange' :: Ord a => a -> a -> a -> Bool
 outOfRange' a b c = not (inRange a b c)
 
 
@@ -480,18 +478,21 @@ even' a = mod a 2 == 0
 
 -- tests if an integral number is odd
 odd :: Integral a => a -> Bool
-odd a = mod a 2 == 1 
+odd a = mod a 2 == 1
 odd' :: Integral a => a -> Bool
-odd' a = a `mod` 2 == 1 
+odd' a = a `mod` 2 == 1
 
 
--- given a b, returs a pair (c, d) such that a == b * c + d
+-- given a b, returns a pair (c, d) such that a == b * c + d
+{-
 divWithRemainder :: (Integral a) => a -> a -> (a, a)
-divWithRemainder a b = floor(a/b), a `mod` b
---don't use floor -- the div operator
+divWithRemainder a b = (floor(a/b), a `mod` b)
+-- don't use floor -- the div operator
+-- floor introduces a RealFrac constraint
+-}
 
-divWithRemainder' :: (Integral a) => a -> a -> (a, a)
-divWithRemainder' a b = (a `div` b, a `mod` b)
+divWithRemainder :: (Integral a) => a -> a -> (a, a)
+divWithRemainder a b = (a `div` b, a `mod` b)
 
 ---- Conditionals
 
@@ -576,27 +577,25 @@ classifyChar c
 
 -- Exercise 12: rewrite classifyChar using if expresions instead of guards
 classifyCharWithIf :: Char -> CharClass
-classifyCharWithIf c = 
-  if (inRange 'a' 'z' c) 
-    then LowerCase 
-    else if (inRange 'A' 'Z' c) 
-      then UpperCase 
-      else if inRange '0' '9' c 
-        then Digit 
-        else if (== ' '  || c == '\t') 
-          then WhiteSpace 
-          else if (== '\n' || c == '\r') 
-            then WhiteSpace 
+classifyCharWithIf c =
+  if (inRange 'a' 'z' c)
+    then LowerCase
+    else if (inRange 'A' 'Z' c)
+      then UpperCase
+      else if inRange '0' '9' c
+        then Digit
+        else if (c == ' '  || c == '\t')
+          then WhiteSpace
+          else if (c == '\n' || c == '\r')
+            then WhiteSpace
             else Unknown
 
 -- Exercise 13: write isLower reusing the classifyChar function
 isLower :: Char -> Bool
-isLower c = if classifyChar c == LowerCase 
+isLower c = if classifyChar c == LowerCase
   then True
   else False
-
-
-
+-- Can you spot what's weird about your definition of isLower? -Zoe
 
 -- Exercise 13: Write a classifyInt function with at least 4 cases
 -- Feel free to classify them however you want!
@@ -621,7 +620,7 @@ classifyInt a
 --                             collatzStep  4 ==  2
 --                             collatzStep  2 ==  1
 collatzCount :: Int -> Int
-collatzCount n 
+collatzCount n
   | n == 1                 = 0
   | otherwise              = 1+collatzCount (collatzStep n)
 

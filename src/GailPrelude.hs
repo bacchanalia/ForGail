@@ -13,6 +13,7 @@ import Prelude
   , Eq
   , Ord
   , Show(..)
+  , IO
   , undefined
   , otherwise
   )
