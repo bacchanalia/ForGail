@@ -584,9 +584,9 @@ classifyCharWithIf c =
       then UpperCase
       else if inRange '0' '9' c
         then Digit
-        else if (== ' '  || c == '\t')
+        else if (c == ' '  || c == '\t')
           then WhiteSpace
-          else if (== '\n' || c == '\r')
+          else if (c == '\n' || c == '\r')
             then WhiteSpace
             else Unknown
 
