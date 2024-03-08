@@ -432,7 +432,7 @@ a >= b = a Prelude.>= b
 -- Exercise 10: write the type and define the function
 
 -- tests if a number is positive
-positive :: Num a, Ord a => a -> Bool
+positive :: (Num a, Ord a) => a -> Bool
 positive a = a > 0
 -- Aren't all nonimaginary numbers automatically Ord?
 -- Lots of things are Ord but not numbers; it's anything with an ordering
