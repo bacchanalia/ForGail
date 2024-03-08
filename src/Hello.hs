@@ -445,10 +445,12 @@ inRange :: Ord a => a -> a -> a -> Bool
 inRange a b c = a <= c && c <= b
 
 -- outOfRange a b c is true if c not is between a and b (exclusive)
-outOFRange :: Ord a => a -> a -> a -> Bool
+{-
+outOfRange :: Ord a => a -> a -> a -> Bool
 outOfRange a b c = c < a || c > b
+-}
 
-outOFRange' :: Ord a => a -> a -> a -> Bool
+outOfRange' :: Ord a => a -> a -> a -> Bool
 outOfRange' a b c = not (inRange a b c)
 
 
