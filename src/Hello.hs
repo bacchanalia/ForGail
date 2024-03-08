@@ -213,7 +213,7 @@ fst (a, _) = a
 
 -- Exercise 3: fill in these definitions
 snd :: (a, b) -> b
-snd (a, b) = b
+snd (_, b) = b
 -- different from snd a b = b, which would mean taking two separate args and returning the 2nd.
 -- instead, (a,b) is a tuple; it's one arg. snd returns the second part.
 
@@ -221,13 +221,13 @@ threeOfThem :: a -> (a, a, a)
 threeOfThem a = (a, a, a)
 
 fstOf3 :: (a, b, c) -> a
-fstOf3 (a, b, c) = a
+fstOf3 (a, _, _) = a
 
 sndOf3 :: (a, b, c) -> b
-sndOf3 (a, b, c) = b
+sndOf3 (_, b, _) = b
 
 thirdOf3 :: (a, b, c) -> c
-thirdOf3 (a, b, c) = c
+thirdOf3 (_, _, c) = c
 
 -- Exercise 4:
 -- a) What is the type of ex3Mystery?
@@ -244,16 +244,16 @@ ex3Mystery :: (b1, b2) -> (b2, b1)
 
 -- Exercise 5: fill in the definition
 firsts :: (a, b) -> (c, d) -> (a, c)
-firsts (a,b) (c,d) = (a,c)
+firsts (a,_) (c,_) = (a,c)
 
 seconds :: (a, b) -> (c, d) -> (b, d)
-seconds (a, b) (c, d) = (b, d)
+seconds (_, b) (_, d) = (b, d)
 
 inners :: (a, b) -> (c, d) -> (b, c)
-inners (a, b) (c, d) = (b, c)
+inners (_, b) (c, _) = (b, c)
 
 outers :: (a, b) -> (c, d) -> (a, d)
-outers (a, b) (c, d) = (a, d)
+outers (a, _) (_, d) = (a, d)
 
 -- The unit type () has only one value ()
 -- It's like a 0-tuple
@@ -262,7 +262,7 @@ unit = ()
 
 -- Exercise 6: fill in the definition
 noneOfThem :: a -> ()
-noneOfThem a = ()
+noneOfThem _ = ()
 --WHY NOT THIS? noneOfThem a = None or noneOfThem a = nil
 
 
