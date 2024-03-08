@@ -595,9 +595,7 @@ isLower :: Char -> Bool
 isLower c = if classifyChar c == LowerCase
   then True
   else False
-
-
-
+-- Can you spot what's weird about your definition of isLower? -Zoe
 
 -- Exercise 13: Write a classifyInt function with at least 4 cases
 -- Feel free to classify them however you want!
