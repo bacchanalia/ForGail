@@ -1,5 +1,7 @@
 module Hello where
 
+-- just saying hi :)
+
 import GailPrelude
 import Prelude qualified
 import Data.List qualified as List
