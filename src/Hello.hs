@@ -390,14 +390,13 @@ _    && _    = False
 -- Logical or
 infixr 2 ||
 (||) :: Bool -> Bool -> Bool
-(||) False False = False
-(||) _ _ = True
-
-
-(||) :: Bool -> Bool -> Bool
 False || False = False
 _ || _ = True
 
+{-
+(||) :: Bool -> Bool -> Bool
+(||) False False = False
+(||) _ _ = True
 
 -- This also works but it's clunky.
 (||) :: Bool -> Bool -> Bool
@@ -405,6 +404,7 @@ _ || _ = True
 (||) True False = True
 (||) False True = True
 (||) True True = True
+-}
 
 
 -- Now lets make some comparision operators
