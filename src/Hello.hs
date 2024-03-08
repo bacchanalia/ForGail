@@ -111,17 +111,17 @@ ex1 x y z = x*(y+z) + y*z
 sumOfPowers :: Int -> Int
 
 --            calls plus
---            on pow x 3 and 
+--            on pow x 3 and
 --            the result of (plus (pow x 2) x)
 --                      |
 --              ________|___________________________
 --             |        |       calls plus        |
 --             |        |     on pow x 2 and x    |
---             |        |      _______|__________ |              
---             |        |      |                | | 
+--             |        |      _______|__________ |
+--             |        |      |                | |
 sumOfPowers x = plus (pow x 3) (plus (pow x 2) x)
---                    calls pow      calls pow 
---                    with x and     with x and  
+--                    calls pow      calls pow
+--                    with x and     with x and
 --                    3 as args      2 as args
 --                        |              |
 -- _______________________|______________|_
@@ -149,10 +149,10 @@ sumOfPowersWithBoth :: Int -> Int
 --                            let ... in and be used anywhere you can use an expression
 --                                ────────────────────┴──────────────────
 sumOfPowersWithBoth x     =    plus cube       (let square = pow x 2 in plus square x)
---      |           |           |    |          ___________  ________ _______________   
+--      |           |           |    |          ___________  ________ _______________
 --name function   1 arg         |   defined          |             |        |
 --                              |above as x**3     about to        |     def of "square" applies under
---                              |                 define s/t we're |     these circumstances. 
+--                              |                 define s/t we're |     these circumstances.
 --                           outside f()          calling 'square' |     applying "plus" to "square" and "x"
 --                         adds the result of cube                 |
 --                         and the stuff in parens               def of "square"
@@ -163,14 +163,14 @@ sumOfPowersWithBoth x     =    plus cube       (let square = pow x 2 in plus squ
 
 -- Exercise 2: Rewrite doupleXPlusTripleY using let and where
 doupleXPlusTripleYWithLet :: Int -> Int -> Int
-doupleXPlusTripleYWithLet x y =  let  doubleX = x * 2 
-                                      tripleY = y * 3 
+doupleXPlusTripleYWithLet x y =  let  doubleX = x * 2
+                                      tripleY = y * 3
                                   in plus doubleX tripleY
---         
+--
 
 doubleXPlusTripleYWithWhere :: Int -> Int -> Int
 doubleXPlusTripleYWithWhere x y = plus doubleX tripleY
-  where 
+  where
     doubleX = x * 2
     tripleY = y * 3
 
@@ -213,7 +213,7 @@ fst (a, _) = a
 
 -- Exercise 3: fill in these definitions
 snd :: (a, b) -> b
-snd (a, b) = b 
+snd (a, b) = b
 -- different from snd a b = b, which would mean taking two separate args and returning the 2nd.
 -- instead, (a,b) is a tuple; it's one arg. snd returns the second part.
 
@@ -264,7 +264,7 @@ unit = ()
 noneOfThem :: a -> ()
 noneOfThem a = ()
 --WHY NOT THIS? noneOfThem a = None or noneOfThem a = nil
- 
+
 
 ---- Type class basics
 
@@ -341,7 +341,7 @@ a !^ b = a ^ b
 -- Exercise 7: insert parens into the definitions with(out?) changing their values
 ex7a = (3  * 4)  + (2  * (6  ^ 2))
 ex7b = (3 !* ((4 !+ 2) !* 6))!^ 2
--- in order of precedence, highest to lowest: !+, !*, !^ 
+-- in order of precedence, highest to lowest: !+, !*, !^
 ex7c = (2  ^ 3)  ^ 2
 ex7d = 2 !^ (3 !^ 2)
 -- read right to left.
@@ -411,9 +411,9 @@ _ || _ = True
 
 -- infix instead of infixl or infixr means that they don't associate
 infix 4 ==, /=, <, <=, >, >=
---comparisons are typically binary and independent 
+--comparisons are typically binary and independent
 --so can't chain so association doesn't make sense
---i.e., a < b < c doesn't have a clear meaning 
+--i.e., a < b < c doesn't have a clear meaning
 
 
 -- Eq is the class of types that can be compared for equality
@@ -476,9 +476,9 @@ even' a = mod a 2 == 0
 
 -- tests if an integral number is odd
 odd :: Integral a => a -> Bool
-odd a = mod a 2 == 1 
+odd a = mod a 2 == 1
 odd' :: Integral a => a -> Bool
-odd' a = a `mod` 2 == 1 
+odd' a = a `mod` 2 == 1
 
 
 -- given a b, returs a pair (c, d) such that a == b * c + d
@@ -572,22 +572,22 @@ classifyChar c
 
 -- Exercise 12: rewrite classifyChar using if expresions instead of guards
 classifyCharWithIf :: Char -> CharClass
-classifyCharWithIf c = 
-  if (inRange 'a' 'z' c) 
-    then LowerCase 
-    else if (inRange 'A' 'Z' c) 
-      then UpperCase 
-      else if inRange '0' '9' c 
-        then Digit 
-        else if (== ' '  || c == '\t') 
-          then WhiteSpace 
-          else if (== '\n' || c == '\r') 
-            then WhiteSpace 
+classifyCharWithIf c =
+  if (inRange 'a' 'z' c)
+    then LowerCase
+    else if (inRange 'A' 'Z' c)
+      then UpperCase
+      else if inRange '0' '9' c
+        then Digit
+        else if (== ' '  || c == '\t')
+          then WhiteSpace
+          else if (== '\n' || c == '\r')
+            then WhiteSpace
             else Unknown
 
 -- Exercise 13: write isLower reusing the classifyChar function
 isLower :: Char -> Bool
-isLower c = if classifyChar c == LowerCase 
+isLower c = if classifyChar c == LowerCase
   then True
   else False
 
@@ -617,7 +617,7 @@ classifyInt a
 --                             collatzStep  4 ==  2
 --                             collatzStep  2 ==  1
 collatzCount :: Int -> Int
-collatzCount n 
+collatzCount n
   | n == 1                 = 0
   | otherwise              = 1+collatzCount (collatzStep n)
 
