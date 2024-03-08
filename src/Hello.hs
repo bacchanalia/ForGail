@@ -483,13 +483,16 @@ odd' :: Integral a => a -> Bool
 odd' a = a `mod` 2 == 1
 
 
--- given a b, returs a pair (c, d) such that a == b * c + d
+-- given a b, returns a pair (c, d) such that a == b * c + d
+{-
 divWithRemainder :: (Integral a) => a -> a -> (a, a)
-divWithRemainder a b = floor(a/b), a `mod` b
---don't use floor -- the div operator
+divWithRemainder a b = (floor(a/b), a `mod` b)
+-- don't use floor -- the div operator
+-- floor introduces a RealFrac constraint
+-}
 
-divWithRemainder' :: (Integral a) => a -> a -> (a, a)
-divWithRemainder' a b = (a `div` b, a `mod` b)
+divWithRemainder :: (Integral a) => a -> a -> (a, a)
+divWithRemainder a b = (a `div` b, a `mod` b)
 
 ---- Conditionals
 
