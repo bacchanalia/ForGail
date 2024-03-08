@@ -3,6 +3,8 @@ module Hello where
 import GailPrelude
 import Prelude qualified
 import Data.List qualified as List
+import Distribution.Compat.Stack (callStack)
+import qualified Control.Applicative as 2nd
 
 ---- Basic definitions
 
@@ -103,13 +105,28 @@ doubleXPlusTripleY x y = plus (double x) (times 3 y)
 
 -- Exercise 1: write a function that computes x*y + x*z + y*z
 ex1 :: Int -> Int -> Int -> Int
-ex1 = undefined
+ex1 x y z = x*(y+z) + y*z
 
 ---- let and where: making nested definitions
 
 -- Here's a function with a bunch of nested function calls
 sumOfPowers :: Int -> Int
+
+--            calls plus
+--            on pow x 3 and 
+--            the result of (plus (pow x 2) x)
+--                      |
+--              ________|___________________________
+--             |        |       calls plus        |
+--             |        |     on pow x 2 and x    |
+--             |        |      _______|__________ |              
+--             |        |      |                | | 
 sumOfPowers x = plus (pow x 3) (plus (pow x 2) x)
+--                    calls pow      calls pow 
+--                    with x and     with x and  
+--                    3 as args      2 as args
+--                        |              |
+-- _______________________|______________|_
 
 -- We can give the subexpressions names using let ... in
 sumOfPowersWithLet :: Int -> Int
@@ -133,16 +150,31 @@ sumOfPowersWithWhere x = sum2 where
 sumOfPowersWithBoth :: Int -> Int
 --                            let ... in and be used anywhere you can use an expression
 --                                ────────────────────┴──────────────────
-sumOfPowersWithBoth x = plus cube (let square = pow x 2 in plus square x)
+sumOfPowersWithBoth x     =    plus cube       (let square = pow x 2 in plus square x)
+--      |           |           |    |          ___________  ________ _______________   
+--name function   1 arg         |   defined          |             |        |
+--                              |above as x**3     about to        |     def of "square" applies under
+--                              |                 define s/t we're |     these circumstances. 
+--                           outside f()          calling 'square' |     applying "plus" to "square" and "x"
+--                         adds the result of cube                 |
+--                         and the stuff in parens               def of "square"
+
+
   where -- where doesn't have to be on the same line as the definition
     cube = pow x 3
 
 -- Exercise 2: Rewrite doupleXPlusTripleY using let and where
 doupleXPlusTripleYWithLet :: Int -> Int -> Int
-doupleXPlusTripleYWithLet = undefined
+doupleXPlusTripleYWithLet x y =  let  doubleX = x * 2 
+                                      tripleY = y * 3 
+                                  in plus doubleX tripleY
+--         
 
 doubleXPlusTripleYWithWhere :: Int -> Int -> Int
-doubleXPlusTripleYWithWhere = undefined
+doubleXPlusTripleYWithWhere x y = plus doubleX tripleY
+  where 
+    doubleX = x * 2
+    tripleY = y * 3
 
 ---- Functions with type variables
 
@@ -165,7 +197,7 @@ const x _ = x
 
 ---- Tuples
 
--- A type is a type that can hold multiple values
+-- A tuple is a type that holds multiple values
 
 somePair :: (Int, Char) -- The syntax for a tuple type  is (Type1, Type2, Type2, ...)
 somePair = (0, '0')     -- The syntax for a tuple value is (value1, value2, value3, ...)
@@ -183,40 +215,47 @@ fst (a, _) = a
 
 -- Exercise 3: fill in these definitions
 snd :: (a, b) -> b
-snd = undefined
+snd (a, b) = b 
+-- different from snd a b = b, which would mean taking two separate args and returning the 2nd.
+-- instead, (a,b) is a tuple; it's one arg. snd returns the second part.
 
 threeOfThem :: a -> (a, a, a)
-threeOfThem = undefined
+threeOfThem a = (a, a, a)
 
 fstOf3 :: (a, b, c) -> a
-fstOf3 = undefined
+fstOf3 (a, b, c) = a
 
 sndOf3 :: (a, b, c) -> b
-sndOf3 = undefined
+sndOf3 (a, b, c) = b
 
 thirdOf3 :: (a, b, c) -> c
-thirdOf3 = undefined
+thirdOf3 (a, b, c) = c
 
 -- Exercise 4:
 -- a) What is the type of ex3Mystery?
+--a tuple? (a, b) -> (b,a)
 -- b) Describe what it does.
+-- it takes a tuple and returns that tuple with the value order swapped
 -- c) Give it a better name
+--tupleswap?
 -- d) Define a second version of it using pattern matching instead of fst and snd
--- mystery :: ??
+-- tupleswap (a,b) = (b, a)
+
 ex3Mystery x = (snd x, fst x)
+ex3Mystery :: (b1, b2) -> (b2, b1)
 
 -- Exercise 5: fill in the definition
 firsts :: (a, b) -> (c, d) -> (a, c)
-firsts = undefined
+firsts (a,b) (c,d) = (a,c)
 
 seconds :: (a, b) -> (c, d) -> (b, d)
-seconds = undefined
+seconds (a, b) (c, d) = (b, d)
 
 inners :: (a, b) -> (c, d) -> (b, c)
-inners = undefined
+inners (a, b) (c, d) = (b, c)
 
 outers :: (a, b) -> (c, d) -> (a, d)
-outers = undefined
+outers (a, b) (c, d) = (a, d)
 
 -- The unit type () has only one value ()
 -- It's like a 0-tuple
@@ -225,8 +264,9 @@ unit = ()
 
 -- Exercise 6: fill in the definition
 noneOfThem :: a -> ()
-noneOfThem = undefined
-
+noneOfThem a = ()
+--WHY NOT THIS? noneOfThem a = None or noneOfThem a = nil
+ 
 
 ---- Type class basics
 
@@ -300,13 +340,14 @@ infixr 6 !^
 (!^) :: Int -> Int -> Int
 a !^ b = a ^ b
 
--- Exercise 7: insert parens into the definitions with changing their values
-ex7a = 3  * 4  + 2  * 6  ^ 2
-ex7b = 3 !* 4 !+ 2 !* 6 !^ 2
-ex7c = 2  ^ 3  ^ 2
-ex7d = 2 !^ 3 !^ 2
-
--- You can use operators prefix and normal functions infix. These are all equivilent
+-- Exercise 7: insert parens into the definitions with(out?) changing their values
+ex7a = (3  * 4)  + (2  * (6  ^ 2))
+ex7b = (3 !* ((4 !+ 2) !* 6))!^ 2
+-- in order of precedence, highest to lowest: !+, !*, !^ 
+ex7c = (2  ^ 3)  ^ 2
+ex7d = 2 !^ (3 !^ 2)
+-- read right to left.
+-- You can use operators prefix and normal functions infix. These are all equivalent
 plus_v0 a b = a + b
 plus_v1 a b = (+) a b    -- wrap an operator in ( ) to make it prefix
 plus_v2 a b = plus a b
@@ -314,8 +355,11 @@ plus_v3 a b = a `plus` b -- wrap a normal function in ` ` to make it infix
 
 -- Exercise 8:
 ex8a = 2 + 3 * 4 -- rewrite using + and * prefix
-ex8b = 2 + 3 * 4 -- rewrite using plus and times infix
+ex8ai = (+) 2 ((*) 3 4)
 
+ex8b = 2 + 3 * 4 -- rewrite using plus and times infix
+ex8bi = 2 `plus` (3 `times` 4)
+--         BACKTICKS! NOT SINGLE QUOTES!
 
 ---- Booleans and comparisions
 -- Lets define our first type!
@@ -348,12 +392,31 @@ _    && _    = False
 -- Logical or
 infixr 2 ||
 (||) :: Bool -> Bool -> Bool
-(||) = undefined
+(||) False False = False
+(||) _ _ = True
+
+
+(||) :: Bool -> Bool -> Bool
+False || False = False
+_ || _ = True
+
+
+-- This also works but it's clunky.
+(||) :: Bool -> Bool -> Bool
+(||) False False = False
+(||) True False = True
+(||) False True = True
+(||) True True = True
+
 
 -- Now lets make some comparision operators
 
 -- infix instead of infixl or infixr means that they don't associate
 infix 4 ==, /=, <, <=, >, >=
+--comparisons are typically binary and independent 
+--so can't chain so association doesn't make sense
+--i.e., a < b < c doesn't have a clear meaning 
+
 
 -- Eq is the class of types that can be compared for equality
 -- Haskell used /= for "not equality" instead of != like a lot of other languages
@@ -371,17 +434,27 @@ a >= b = a Prelude.>= b
 -- Exercise 10: write the type and define the function
 
 -- tests if a number is positive
-positive :: Num a => a -> Bool
-positive = undefined
+positive :: Num a, Ord a => a -> Bool
+positive a = a > 0
+-- Aren't all nonimaginary numbers automatically Ord?
+-- Lots of things are Ord but not numbers; it's anything with an ordering
+-- A string has an ordering (aa < ab)
+-- Lists of numbers have orders
 
 -- inRange a b c is true if c is between a and b (inclusive)
--- inRange :: ???
-inRange = undefined
+inRange :: Ord a => a -> a -> a -> Bool
+--This looks wrong but I don't know why.
+inRange a b c = a <= c && c <= b
 
 -- outOfRange a b c is true if c not is between a and b (exclusive)
--- outOFRange :: ???
-outOfRange = undefined
+outOFRange :: Ord a => a -> a -> a -> Bool
+outOfRange a b c = c < a || c > b
 
+outOFRange' :: Ord a => a -> a -> a -> Bool
+outOfRange' a b c = not (inRange a b c)
+
+
+--type signatures are much harder for me than function definitions!
 
 --- Integral operations
 
@@ -396,17 +469,27 @@ mod a b = a `Prelude.mod` b
 -- Exercise 11: write the type and define the function
 
 -- tests if an integral number is even
--- even :: ???
-even = undefined
+even :: Integral a => a -> Bool
+even a = a `mod` 2 == 0
+
+even' :: Integral a => a -> Bool
+even' a = mod a 2 == 0
+
 
 -- tests if an integral number is odd
--- odd :: ???
-odd = undefined
+odd :: Integral a => a -> Bool
+odd a = mod a 2 == 1 
+odd' :: Integral a => a -> Bool
+odd' a = a `mod` 2 == 1 
+
 
 -- given a b, returs a pair (c, d) such that a == b * c + d
--- divWithRemainder :: ???
-divWithRemainder = undefined
+divWithRemainder :: (Integral a) => a -> a -> (a, a)
+divWithRemainder a b = floor(a/b), a `mod` b
+--don't use floor -- the div operator
 
+divWithRemainder' :: (Integral a) => a -> a -> (a, a)
+divWithRemainder' a b = (a `div` b, a `mod` b)
 
 ---- Conditionals
 
@@ -416,15 +499,36 @@ collatzStep :: Int -> Int
 --                    │            ┌─────────────┬────── The then and else branches must have the same type
 --                 ───┴──      ────┴────      ───┴───
 collatzStep n = if even n then n `div` 2 else 3*n + 1
+--    n is arg      |              |             |
+--              if it's even    divide by 2     else 3n+1
+
+-- 3 parts: if, then, else
+-- ---- if evaluates to a Bool
+   -- --then and else must return the same type
+
 
 -- in Haskell we can write our own if function
 if' :: Bool -> a -> a -> a
+--     args are Bool    --returns one value of the same type
+--     and two values
 if' True  thenVal _       = thenVal
+--  if the condition is
+  -- True, return val1
 if' False _       elseVal = elseVal
+--  if the condition is
+  -- False, return val2
+
+
+
 
 -- or equivilently
 if'' :: Bool -> a -> a -> a
+-- takes a Bool and 2 values, returns 1 value
+
 if'' cond thenVal elseVal = if cond then thenVal else elseVal
+--     |
+--  a param; the condition being tested
+
 
 collatzStep' :: Int -> Int
 collatzStep' n = if' (even n) (n `div` 2) (3*n + 1)
@@ -439,8 +543,12 @@ collatzStepWithGuards :: Int -> Int
 collatzStepWithGuards n | even n    = n `div` 2
                         | otherwise = 3*n + 1
 
+--Guards are just a way to specify diff behaviors for diff conditions?
+--Effectively mean "if"?
+
 -- Guards are handy if you have more than two conditions
 -- and are tested from top to bottom
+
 
 data CharClass where
   LowerCase  :: CharClass
@@ -466,14 +574,40 @@ classifyChar c
 
 -- Exercise 12: rewrite classifyChar using if expresions instead of guards
 classifyCharWithIf :: Char -> CharClass
-classifyCharWithIf = undefined
+classifyCharWithIf c = 
+  if (inRange 'a' 'z' c) 
+    then LowerCase 
+    else if (inRange 'A' 'Z' c) 
+      then UpperCase 
+      else if inRange '0' '9' c 
+        then Digit 
+        else if (== ' '  || c == '\t') 
+          then WhiteSpace 
+          else if (== '\n' || c == '\r') 
+            then WhiteSpace 
+            else Unknown
 
 -- Exercise 13: write isLower reusing the classifyChar function
 isLower :: Char -> Bool
-isLower = undefined
+isLower c = if classifyChar c == LowerCase 
+  then True
+  else False
+
+
+
 
 -- Exercise 13: Write a classifyInt function with at least 4 cases
 -- Feel free to classify them however you want!
+data IntClass =  Pos_One_Digit | Pos_Two_Digit | Pos_Three_Digit | Dunno
+classifyInt :: Int -> IntClass
+classifyInt a
+  | 1 >= a && a <=9     = Pos_One_Digit
+  | 10 >= a && a <=99      = Pos_Two_Digit
+  | 100 >= a && a <=999    = Pos_Three_Digit
+  | otherwise          = Dunno
+
+
+
 
 -- Exercise 14: (hard) define the function
 -- Given an int n, return the number of times you have to apply collatzStep to get to 1
@@ -485,8 +619,9 @@ isLower = undefined
 --                             collatzStep  4 ==  2
 --                             collatzStep  2 ==  1
 collatzCount :: Int -> Int
-collatzCount = undefined
-
+collatzCount n 
+  | n == 1                 = 0
+  | otherwise              = 1+collatzCount (collatzStep n)
 
 ---- List literals and ranges
 oneToFive :: [Int]      -- [Type] means a list of Type
@@ -517,7 +652,10 @@ stringVal = "some string"
 
 -- Exercise 15: rewrite stringVal using list literal syntax
 stringValWithListSyntax :: String
-stringValWithListSyntax = undefined
+stringValWithListSyntax = ['s','t','r','i','n','g']
+-- == "string"
+
+
 
 -- You can use string syntax in patterns too
 knockKnock :: String -> String
