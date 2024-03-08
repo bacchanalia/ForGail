@@ -230,7 +230,7 @@ thirdOf3 :: (a, b, c) -> c
 thirdOf3 (_, _, c) = c
 
 -- Exercise 4:
--- a) What is the type of ex3Mystery?
+-- a) What is the type of ex4Mystery?
 --a tuple? (a, b) -> (b,a)
 -- b) Describe what it does.
 -- it takes a tuple and returns that tuple with the value order swapped
@@ -239,8 +239,8 @@ thirdOf3 (_, _, c) = c
 -- d) Define a second version of it using pattern matching instead of fst and snd
 -- tupleswap (a,b) = (b, a)
 
-ex3Mystery x = (snd x, fst x)
-ex3Mystery :: (b1, b2) -> (b2, b1)
+ex4Mystery :: (b1, b2) -> (b2, b1)
+ex4Mystery x = (snd x, fst x)
 
 -- Exercise 5: fill in the definition
 firsts :: (a, b) -> (c, d) -> (a, c)
